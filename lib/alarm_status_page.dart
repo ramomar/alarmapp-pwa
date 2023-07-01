@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class StatusPage extends StatelessWidget {
-  const StatusPage({super.key});
+class AlarmStatusPage extends StatelessWidget {
+  const AlarmStatusPage({super.key});
 
   @override
   Widget build(BuildContext context) {

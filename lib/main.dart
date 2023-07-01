@@ -1,4 +1,4 @@
-import 'package:alarmapp_pwa/status_page.dart';
+import 'package:alarmapp_pwa/alarm_status_page.dart';
 import 'package:alarmapp_pwa/settings_page.dart';
 import 'package:flutter/material.dart';
 
@@ -54,7 +54,7 @@ class _TabNavigationState extends State<TabNavigation> {
           ],
         ),
         body: <Widget>[
-          const StatusPage(),
+          const AlarmStatusPage(),
           const SettingsPage(),
         ][_currentPageIndex]);
   }
