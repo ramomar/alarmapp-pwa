@@ -97,7 +97,7 @@ class StatusView extends StatelessWidget {
         const SizedBox(height: 18),
         SummaryCard(
           title: 'Primer piso',
-          height: 320,
+          height: 360,
           indicators: [
             ...getFloorAreas(alarmState, 1)
                 .map((area) => _buildArea(context, area)),
@@ -115,7 +115,7 @@ class StatusView extends StatelessWidget {
         const SizedBox(height: 12),
         SummaryCard(
           title: 'Segundo piso',
-          height: 216,
+          height: 248,
           indicators: [
             ...getFloorAreas(alarmState, 2)
                 .map((area) => _buildArea(context, area)),
