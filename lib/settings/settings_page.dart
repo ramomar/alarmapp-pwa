@@ -1,4 +1,6 @@
+import 'package:alarmapp_pwa/alarm_status/bloc/alarm_status_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -12,7 +14,8 @@ class SettingsPage extends StatelessWidget {
           const Text('Probar sirena'),
           OutlinedButton(
             child: const Text('Probar'),
-            onPressed: () => {},
+            onPressed: () =>
+                context.read<AlarmStatusBloc>().add(SirenTestRequested()),
           ),
         ],
       ),
