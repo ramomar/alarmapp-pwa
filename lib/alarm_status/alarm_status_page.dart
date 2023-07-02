@@ -16,7 +16,6 @@ class AlarmStatusPage extends StatelessWidget {
           padding: const EdgeInsets.only(left: 28, right: 28, top: 32),
           child: Stack(
             children: [
-              const Text('v'),
               ...switch (state) {
                 MonitoredState(state: final s) => [
                     Center(
@@ -66,7 +65,7 @@ class StatusView extends StatelessWidget {
     return Column(
       children: [
         SummaryCard(
-          title: 'General',
+          title: 'General _',
           height: 200,
           indicators: [
             SimpleIndicator(
