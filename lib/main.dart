@@ -2,11 +2,17 @@ import 'package:alarmapp_pwa/alarm_status/alarm_status_page.dart';
 import 'package:alarmapp_pwa/alarm_status/bloc/alarm_status_bloc.dart';
 import 'package:alarmapp_pwa/repositories/alarm_system_repository.dart';
 import 'package:alarmapp_pwa/settings/settings_page.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-void main() {
+void main() async {
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   usePathUrlStrategy();
   runApp(const App());
 }
@@ -22,10 +28,6 @@ class App extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightBlue),
           useMaterial3: true,
         ),
-        // onGenerateRoute: (RouteSettings settings) {
-        //   return MaterialPageRoute(
-        //       settings: settings, builder: (context) => const TabNavigation());
-        // },
         home: const TabNavigation());
   }
 }
@@ -66,37 +68,66 @@ class _TabNavigationState extends State<TabNavigation> {
         },
         child: BlocBuilder<AlarmStatusBloc, AlarmStatusState>(
           builder: (context, state) {
-            if (state is UnmonitoredState) {
-              return const Center(
-                child: CircularProgressIndicator(
-                  value: null,
-                ),
-              );
-            }
+            return FutureBuilder<NotificationSettings>(
+              future: FirebaseMessaging.instance.getNotificationSettings(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<NotificationSettings> snapshot) {
+                if (snapshot.hasData &&
+                    snapshot.data?.authorizationStatus !=
+                        AuthorizationStatus.authorized) {
+                  return Center(
+                    child: FilledButton(
+                      onPressed: () async {
+                        await FirebaseMessaging.instance.requestPermission(
+                          alert: true,
+                          announcement: false,
+                          badge: true,
+                          carPlay: true,
+                          criticalAlert: true,
+                          provisional: false,
+                          sound: true,
+                        );
 
-            return Scaffold(
-                bottomNavigationBar: NavigationBar(
-                  onDestinationSelected: (int index) {
-                    setState(() {
-                      _currentPageIndex = index;
-                    });
-                  },
-                  selectedIndex: _currentPageIndex,
-                  destinations: const <Widget>[
-                    NavigationDestination(
-                      icon: Icon(Icons.fact_check),
-                      label: 'Resumen',
+                        setState(() {});
+                      },
+                      child: const Text('Comenzar'),
                     ),
-                    NavigationDestination(
-                      icon: Icon(Icons.settings),
-                      label: 'Configuración',
-                    ),
-                  ],
-                ),
-                body: <Widget>[
-                  const AlarmStatusPage(),
-                  const SettingsPage(),
-                ][_currentPageIndex]);
+                  );
+                }
+
+                if (state is MonitoredState) {
+                  return Scaffold(
+                      bottomNavigationBar: NavigationBar(
+                        onDestinationSelected: (int index) {
+                          setState(() {
+                            _currentPageIndex = index;
+                          });
+                        },
+                        selectedIndex: _currentPageIndex,
+                        destinations: const <Widget>[
+                          NavigationDestination(
+                            icon: Icon(Icons.fact_check),
+                            label: 'Resumen',
+                          ),
+                          NavigationDestination(
+                            icon: Icon(Icons.settings),
+                            label: 'Configuración',
+                          ),
+                        ],
+                      ),
+                      body: <Widget>[
+                        const AlarmStatusPage(),
+                        const SettingsPage(),
+                      ][_currentPageIndex]);
+                }
+
+                return const Center(
+                  child: CircularProgressIndicator(
+                    value: null,
+                  ),
+                );
+              },
+            );
           },
         ),
       ),

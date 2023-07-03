@@ -1,11 +1,11 @@
 {
-    "name": "alarmapp_pwa",
-    "short_name": "alarmapp_pwa",
+    "name": "Alarmapp",
+    "short_name": "Alarmapp",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Alarmapp admin.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

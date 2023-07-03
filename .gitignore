@@ -42,3 +42,10 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Local Netlify folder
+.netlify
+
+# haha (run setup again and get data from the console)
+firebase-messaging-sw.js
+firebase_options.dart
