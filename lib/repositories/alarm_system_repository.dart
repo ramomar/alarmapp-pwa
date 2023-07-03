@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:html';
 
 import 'package:alarmapp_pwa/models/alarm_state.dart';
+import 'package:alarmapp_pwa/models/area_state.dart';
 import 'package:http/http.dart' as http;
 
 const String _baseUrl = 'api.particle.io';
