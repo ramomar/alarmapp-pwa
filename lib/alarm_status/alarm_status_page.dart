@@ -65,7 +65,7 @@ class StatusView extends StatelessWidget {
     return Column(
       children: [
         SummaryCard(
-          title: 'General _',
+          title: 'General',
           height: 200,
           indicators: [
             SimpleIndicator(

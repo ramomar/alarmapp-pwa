@@ -3,8 +3,11 @@ import 'package:alarmapp_pwa/alarm_status/bloc/alarm_status_bloc.dart';
 import 'package:alarmapp_pwa/repositories/alarm_system_repository.dart';
 import 'package:alarmapp_pwa/settings/settings_page.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 void main() async {
   usePathUrlStrategy();
@@ -17,12 +20,24 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Alarmapp',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightBlue),
-          useMaterial3: true,
-        ),
-        home: const TabNavigation());
+      title: 'Alarmapp',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightBlue),
+        useMaterial3: true,
+      ),
+      home: FutureBuilder<SharedPreferences>(
+          future: SharedPreferences.getInstance(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return Provider<SharedPreferences>(
+                create: (_) => snapshot.data!,
+                child: const TabNavigation(),
+              );
+            }
+
+            return const Text('...');
+          }),
+    );
   }
 }
 
@@ -34,25 +49,68 @@ class TabNavigation extends StatefulWidget {
 }
 
 class _TabNavigationState extends State<TabNavigation> {
-  _TabNavigationState() {
-    // hack so I don't have to build a login screen hehe
-    // access token and device id are going to come from the URL (:
-    final queryParams = Uri.base.queryParameters;
-
-    accessToken = queryParams['accessToken'] ?? '';
-    deviceId = queryParams['deviceId'] ?? '';
-  }
-
-  late String accessToken;
-  late String deviceId;
+  _TabNavigationState();
 
   int _currentPageIndex = 0;
+  final deviceIdFieldController = TextEditingController();
+  final accessTokenFieldController = TextEditingController();
+
+  @override
+  void dispose() {
+    deviceIdFieldController.dispose();
+    accessTokenFieldController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final prefs = context.read<SharedPreferences>();
+
+    if (!prefs.containsKey('deviceId') || !prefs.containsKey('accessToken')) {
+      return Scaffold(
+        body: Padding(
+          padding: const EdgeInsets.all(50),
+          child: SizedBox(
+            child: Center(
+              child: Form(
+                child: Column(
+                  children: [
+                    TextFormField(
+                      controller: deviceIdFieldController,
+                      obscureText: true,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'deviceId',
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: accessTokenFieldController,
+                      obscureText: true,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'accessToken',
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    FilledButton(
+                        onPressed: _handleFormSubmit,
+                        child: const Text('Comenzar'))
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
     return RepositoryProvider(
-      create: (context) =>
-          AlarmSystemRepository(accessToken: accessToken, deviceId: deviceId),
+      create: (context) {
+        return AlarmSystemRepository(
+          accessToken: prefs.getString('accessToken')!,
+          deviceId: prefs.getString('deviceId')!);
+      },
       child: BlocProvider(
         create: (BuildContext context) {
           final bloc = AlarmStatusBloc(context.read<AlarmSystemRepository>());
@@ -97,5 +155,20 @@ class _TabNavigationState extends State<TabNavigation> {
         ),
       ),
     );
+  }
+
+  void _handleFormSubmit() async {
+    final prefs = await SharedPreferences.getInstance();
+    final sanitizedDeviceId = deviceIdFieldController.text.trim();
+    final sanitizedAccessToken = accessTokenFieldController.text.trim();
+
+    if (sanitizedDeviceId.isEmpty || sanitizedAccessToken.isEmpty) {
+      return;
+    }
+
+    await prefs.setString('deviceId', sanitizedDeviceId);
+    await prefs.setString('accessToken', sanitizedAccessToken);
+
+    setState(() {});
   }
 }
