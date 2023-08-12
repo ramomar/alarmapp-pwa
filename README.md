@@ -14,5 +14,9 @@ Control panel for the [Alarmapp](https://github.com/ramomar/alarmapp) project ma
 - General summary view.
 - Test siren button.
 
+## Platforms
+
+Only tested as a PWA.
+
 ## Deploying to devices
 Use netlify or any cloud provider.
