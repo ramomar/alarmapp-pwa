@@ -1,16 +1,18 @@
-# alarmapp_pwa
+# Alarmapp PWA
 
-A new Flutter project.
+Control panel for the [Alarmapp](https://github.com/ramomar/alarmapp) project made with Flutter.
 
-## Getting Started
+<p align="center">
+  <img width="250" src="https://github.com/ramomar/alarmapp-pwa/assets/10622989/54614f40-2989-442b-9c40-213764e4da39">
+</p>
 
-This project is a starting point for a Flutter application.
+## Features
 
-A few resources to get you started if this is your first Flutter project:
+- Activate/deactivate system.
+- Disable areas.
+- Panic button.
+- General summary view.
+- Test siren button.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Deploying to devices
+Use netlify or any cloud provider.
